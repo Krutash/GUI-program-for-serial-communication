@@ -8,8 +8,6 @@ from scipy import stats
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-
-import qdarkstyle
 import math
 import scipy
 import serial
@@ -23,10 +21,8 @@ import input_new_device
 import matplotlib
 import matplotlib.animation as animation
 
-
-from matplotlib.backends.qt_compat import QtCore, QtWidgets, is_pyqt5
-if is_pyqt5():
-    from matplotlib.backends.backend_qt5agg import (
+from matplotlib.backends.qt_compat import QtCore, QtWidgets
+from matplotlib.backends.backend_qt5agg import (
         FigureCanvas, NavigationToolbar2QT as NavigationToolbar)
 
 from matplotlib.figure import Figure
@@ -35,14 +31,14 @@ from matplotlib import style
 LARGE_FONT= QFont("Verdana", 12)
 style.use("ggplot")
 
-ab = open('SampleText3.txt', 'w')
+ab = open('Logs/Data_input.txt', 'w')
 ab.write('')
 ab.close()
 
 f2 = Figure(figsize=(20,20), dpi=100)
 a3 = f2.add_subplot(111)
 
-Cof_file=open('Input_Coeff.txt').read()
+Cof_file=open('Logs/Input_Coeff.txt').read()
 DataInList = Cof_file.split('\n')
 list_of_data = []
 c1 = 1.0
@@ -63,7 +59,7 @@ except:
 
 
 def animate2(self):
-        pullData3 = open("SampleText3.txt", 'r').read()
+        pullData3 = open("Logs/Data_input.txt", 'r').read()
         dataList3 = pullData3.split('\n')
         xlist3 = []
         ylist3 = []
@@ -97,9 +93,9 @@ class IonWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("Ion Chrom App")
         msgBox = QMessageBox()
-        msgBox.setIconPixmap(QPixmap("ClientIcon.ico"))
+        msgBox.setIconPixmap(QPixmap("Media/ClientIcon.ico"))
         msgBox.setWindowTitle("CHROM-STATION")
-        msgBox.setWindowIcon(QIcon("ClientIcon.ico"))
+        msgBox.setWindowIcon(QIcon("Media/ClientIcon.ico"))
         msgBox.setText("CHROM - STATION")
         msgBox.setInformativeText("\nVersion 1.0.0\nDeveloped by BITS-Pilani")       
         msgBox.exec()
@@ -110,7 +106,7 @@ class IonWindow(QMainWindow):
         self.stacked_layout.addWidget(self.HomePage_widget)        
         
         self.stacked_layout.setCurrentIndex(0)
-        self.setWindowIcon(QIcon("ClientIcon.ico"))
+        self.setWindowIcon(QIcon("Media/ClientIcon.ico"))
     
         self.Central_widget = QWidget()
         self.Central_widget.setLayout(self.stacked_layout)
@@ -119,10 +115,10 @@ class IonWindow(QMainWindow):
     def HomePage(self):
 
         #setting up layout of the page:
-        icon = QIcon(QPixmap('ClientIcon.ico'))
-        icon2 = QIcon(QPixmap('graphs-review.ico'))
-        icon4 = QIcon(QPixmap('Calibration-icon.png'))
-        icon3 = QIcon(QPixmap('peak-105546.png'))
+        icon = QIcon(QPixmap('Media/ClientIcon.ico'))
+        icon2 = QIcon(QPixmap('Media/graphs-review.ico'))
+        icon4 = QIcon(QPixmap('Media/Calibration-icon.png'))
+        icon3 = QIcon(QPixmap('Media/peak-105546.png'))
         
         self.OnlineBut = QPushButton()
         self.OnlineBut.clicked.connect(self.Online_Mode)
@@ -213,7 +209,7 @@ class IonWindow(QMainWindow):
 
         #Initiating the data pulling from log file:
         
-        addedData = open("Log.txt", 'r').read()
+        addedData = open("Logs/Log.txt", 'r').read()
         dataList = addedData.split('\n')
         Details = ''
         xlist = []
@@ -264,7 +260,7 @@ class IonWindow(QMainWindow):
         self.EluentBut = QLabel("Eluent")
         self.LeStatus = QComboBox()
         
-        items = open("Eluent.txt", 'r').read()
+        items = open("Logs/Eluent.txt", 'r').read()
         itemsData = []
         itemsData = items.split('\n')
         self.LeStatus.addItems(itemsData)
@@ -320,12 +316,12 @@ class IonWindow(QMainWindow):
 
         #adding time from log file:
         
-        Time = open("TimeDomain.txt", 'r').read()
+        Time = open("Logs/TimeDomain.txt", 'r').read()
         TimeData = []
         TimeData = Time.split('\n')
         self.TimeIn.addItems(TimeData)
 
-        vol = open("Samp_Vol.txt", 'r').read()
+        vol = open("Logs/Vol_input.txt", 'r').read()
         Volu = []
         Volu = vol.split('\n')
         self.Vol_lin.addItems(Volu)
@@ -364,7 +360,7 @@ class IonWindow(QMainWindow):
         self.bgTime = QLabel("Time (min)")
         self.bgTimeIn = QComboBox()
 
-        Timebg = open("TimeDomain.txt", 'r').read()
+        Timebg = open("Logs/TimeDomain.txt", 'r').read()
         TimeDatabg = []
         TimeDatabg = Timebg.split('\n')
         self.bgTimeIn.addItems(TimeDatabg)
@@ -429,7 +425,7 @@ class IonWindow(QMainWindow):
         self.view_mode_widget.setLayout(self.grow_grid)
         
 
-        self.canvas2.addedData = open("SampleText3.txt", 'r').read()
+        self.canvas2.addedData = open("Logs/Data_input.txt", 'r').read()
         dataList2 = self.canvas2.addedData.split('\n')
         xlist2 = []
         ylist2 = []
@@ -646,8 +642,9 @@ class IonWindow(QMainWindow):
         #log_extra_det = ''
         datetime = QtCore.QDate.currentDate()
         
-        
-        Valve_Signal = serial.Serial('COM3',57600,timeout=1)
+        #CHANGE SIGNAL HERE
+        Valve_Signal = serial.Serial('COM1',57600,timeout=1)
+        #print("OKAY")
         t1 = time.time()
         dts = 1
         while(dts):
@@ -704,12 +701,6 @@ class IonWindow(QMainWindow):
                 break
             else:
                 continue 
-                
-        #self.t1 = input_new_device.thread_with_exception(int1, 1)
-
-        #self.StartPage()
-        #self.stacked_layout.addWidget(self.StartPage_Widget)
-        #self.stacked_layout.setCurrentWidget(self.StartPage_Widget)
 
         try:
             self.StopButo.setEnabled(False)
@@ -774,7 +765,7 @@ class IonWindow(QMainWindow):
             pass
     def Offline_Mode2(self):
         a3.clear()
-        clear_showFile = open("SampleText3.txt", 'w')
+        clear_showFile = open("Logs/Data_input.txt", 'w')
         clear_showFile.write('')
         clear_showFile.close()
         self.backButo.setEnabled(False)
@@ -806,8 +797,8 @@ class IonWindow(QMainWindow):
         self.t1.raise_exception() 
         self.t1.join()
         try:
-            log_extra_det = open('LogDetails.txt').read()
-            log_addition = open('Log.txt', 'a+')
+            log_extra_det = open('Logs/LogDetails.txt').read()
+            log_addition = open('Logs/Log.txt', 'a+')
             log_addition.seek(0,0)
             log_addition.write('Extra Details\n' + log_extra_det)
             log_addition.close()
@@ -820,7 +811,7 @@ class IonWindow(QMainWindow):
         file.close()
 
         try:
-            log_det_clear = open("LogDetails.txt", 'w')
+            log_det_clear = open("Logs/LogDetails.txt", 'w')
             log_det_clear.write("")
             log_det_clear.close()
         except:
@@ -844,7 +835,7 @@ class IonWindow(QMainWindow):
         self.backButo2.setEnabled(True)
         
         a3.clear()
-        clear_showFile = open("SampleText3.txt", 'w')
+        clear_showFile = open("Logs/Data_input.txt", 'w')
         clear_showFile.write('')
         clear_showFile.close()
         self.backButo.setEnabled(False)
@@ -853,7 +844,7 @@ class IonWindow(QMainWindow):
         self.stacked_layout.setCurrentWidget(self.view_mode_widget)
 
     def NewItem(self,):
-        items = open("Eluent.txt", 'a+')
+        items = open("Logs/Eluent.txt", 'a+')
         ItemLabel, ok = QLineEdit(self, "New Eluent")
         input1 = getText(ItemLabel)
         items.write(input1)
@@ -864,7 +855,7 @@ class IonWindow(QMainWindow):
             if(text):
                 self.LeStatus.addItem(text)
                 new_entry = text
-                items1 = open("Eluent.txt", 'a+')
+                items1 = open("Logs/Eluent.txt", 'a+')
                 items1.write('\n'+new_entry)
                 self.Strength.setEnabled(True)
                 self.strenghtline.setReadOnly(False)
@@ -934,7 +925,7 @@ class IonWindow(QMainWindow):
     def Information(self):
         timeRemaining = 0.0
         timeElapsed = time.time()
-        DataInfo = open("Input_Coeff.txt", 'r').readline()
+        DataInfo = open("Logs/Input_Coeff.txt", 'r').readline()
 
         
         DataInfoList = DataInfo.split()
@@ -1118,7 +1109,7 @@ class IonWindow(QMainWindow):
         self.textBox.resize(200,200)
         datetime = QtCore.QDate.currentDate()
         try:
-            det_file = open('LogDetails.txt').read()
+            det_file = open('Logs/LogDetails.txt').read()
             if det_file =='':
                 self.textBox.insertPlainText(datetime.toString(Qt.DefaultLocaleLongDate)+'\n'+'\n')
                 pass
@@ -1142,7 +1133,7 @@ class IonWindow(QMainWindow):
 
     def saveInLog(self):
         if(self.textBox.toPlainText()):
-            f = open('LogDetails.txt', 'w+')
+            f = open('Logs/LogDetails.txt', 'w+')
             details = self.textBox.toPlainText()
             f.write(details+'\n')
             f.close()
@@ -1333,7 +1324,7 @@ class IonWindow(QMainWindow):
                         x1R, y1R = eachLine.split()
                         self.xlist1R.append(float(x1R))
                         freq = float(y1R)
-                        k = (c1*freq*freq*freq + c2*freq*freq + c3*freq + c4)
+                        k = freq
                         self.ylist1R.append(float(k))                        
                         
                     except:
@@ -1381,7 +1372,7 @@ class IonWindow(QMainWindow):
             
     def Overlay(self):
 
-        icon = QIcon(QPixmap('close_bluei.png'))
+        icon = QIcon(QPixmap('Media/close_bluei.png'))
         
         self.File1OV = QPushButton("Browse file 1")
         self.File1OV.clicked.connect(self.fileInputOV)
@@ -1465,7 +1456,8 @@ class IonWindow(QMainWindow):
             index += 1
 
         index = 0
-        for i, j in zip([self.Blu_D, self.Gre_D, self.Red_D, self.Blc_D, self.Org_D],[self.det1, self.det2, self.det3, self.det4, self.det5]):
+        for i, j in zip([self.Blu_D, self.Gre_D, self.Red_D, self.Blc_D, self.Org_D],
+                        [self.det1, self.det2, self.det3, self.det4, self.det5]):
             self.tempF_OV.addWidget(i, index, 2)
             i.clicked.connect(j)
             i.resize(0.5,0.5)
@@ -1474,7 +1466,8 @@ class IonWindow(QMainWindow):
         index = 0
 
         
-        for i,j in zip([self.Blu_C, self.Gre_C, self.Red_C, self.Blc_C, self.Org_C], [self.clr1, self.clr2, self.clr3, self.clr4, self.clr5]):
+        for i,j in zip([self.Blu_C, self.Gre_C, self.Red_C, self.Blc_C, self.Org_C],
+                       [self.clr1, self.clr2, self.clr3, self.clr4, self.clr5]):
             self.tempF_OV.addWidget(i, index, 3)
             i.clicked.connect(j)
             index += 1
@@ -1557,7 +1550,7 @@ class IonWindow(QMainWindow):
                         xlist1OV.append(float(x1OV))
                         freq = float(y1OV)
                         k = (c1*freq*freq*freq + c2*freq*freq + c3*freq + c4)
-                        ylist1OV.append(float(k))
+                        ylist1OV.append(float(freq))
                     except:
                         self.Details_1OV += eachLine+'\n'
                         pass
@@ -1626,7 +1619,7 @@ class IonWindow(QMainWindow):
                         xlist2OV.append(float(x2OV))
                         freq = float(y2OV)
                         k = (c1*freq*freq*freq + c2*freq*freq + c3*freq + c4)
-                        ylist2OV.append(float(k))
+                        ylist2OV.append(float(freq))
                     except:
                         self.Details_2OV += eachLine+'\n'
                         pass
@@ -1664,7 +1657,7 @@ class IonWindow(QMainWindow):
                         xlist3OV.append(float(x3OV))
                         freq = float(y3OV)
                         k = (c1*freq*freq*freq + c2*freq*freq + c3*freq + c4)
-                        ylist3OV.append(float(k))
+                        ylist3OV.append(float(freq))
                     except:
                         self.Details_3OV += eachLine+'\n'
                         pass
@@ -1703,7 +1696,7 @@ class IonWindow(QMainWindow):
                         xlist4OV.append(float(x4OV))
                         freq = float(y4OV)
                         k = (c1*freq*freq*freq + c2*freq*freq + c3*freq + c4)
-                        ylist4OV.append(float(k))
+                        ylist4OV.append(float(freq))
                     except:
                         self.Details_4OV += eachLine+'\n'
                         pass
@@ -2019,10 +2012,8 @@ class IonWindow(QMainWindow):
                
 def main():
     IonSim = QApplication(sys.argv)
-    #IonSim.setStyle('Fusion')
     ionWind = IonWindow()
-    #IonSim.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5()) #Unmask for DARK THEME
-    ionWind.show()
+    ionWind.showMaximized()
     ionWind.raise_()
     IonSim.exec_()
 
